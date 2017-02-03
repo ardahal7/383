@@ -8,13 +8,14 @@ using _383_Phase1_InventoryTracker.Entities;
 namespace _383_Phase1_InventoryTracker.Migrations
 {
     [DbContext(typeof(InventoryTrackerContext))]
-    [Migration("20170202224902_sdsd")]
-    partial class sdsd
+    [Migration("20170203070048_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .HasAnnotation("ProductVersion", "1.1.0-rtm-22752");
+                .HasAnnotation("ProductVersion", "1.1.0-rtm-22752")
+                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("_383_Phase1_InventoryTracker.Entities.InventoryItem", b =>
                 {
@@ -36,7 +37,8 @@ namespace _383_Phase1_InventoryTracker.Migrations
             modelBuilder.Entity("_383_Phase1_InventoryTracker.Entities.User", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("FirstName")
                         .IsRequired();

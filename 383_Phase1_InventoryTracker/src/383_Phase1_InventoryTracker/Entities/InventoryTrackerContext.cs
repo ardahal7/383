@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Threading.Tasks;
 
 namespace _383_Phase1_InventoryTracker.Entities
@@ -22,6 +23,8 @@ namespace _383_Phase1_InventoryTracker.Entities
         {
            // optionsBuilder.UseSqlite("Filename=Inventory.db");
         }
+
+       
 
     }
 }
