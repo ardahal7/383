@@ -15,7 +15,13 @@ namespace _383_Phase1_InventoryTracker.Entities
         {
 
         }
-     
+
+        public InventoryTrackerContext()
+        {
+
+        }
+
+
         public DbSet<User> Users { get; set; }
         public DbSet<InventoryItem> InventoryItems { get; set; }
 

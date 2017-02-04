@@ -29,7 +29,7 @@ namespace _383_Phase1_InventoryTracker.Entities
         
         [Required]
         [Display(Name = "Password")]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 4)]
+        [StringLength(100, ErrorMessage = "The password must be at least 4 characters long.", MinimumLength = 4)]
         [DataType(DataType.Password)]
         public string Password { get; set; }
     }

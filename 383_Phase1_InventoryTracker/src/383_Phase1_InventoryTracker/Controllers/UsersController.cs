@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using _383_Phase1_InventoryTracker.Entities;
+using CryptoHelper;
 
 namespace _383_Phase1_InventoryTracker.Controllers
 {
@@ -58,18 +59,23 @@ namespace _383_Phase1_InventoryTracker.Controllers
 
             if (ModelState.IsValid)
             {
-
+                //Searching if the username already exists in the database. 
                 User ObjectFromDatabase = _context.Users.FirstOrDefault(s => s.UserName.Equals(user.UserName));
 
                 if(ObjectFromDatabase == null)
-                {                    
+                {
+                    //Creating an object to save in the database
                     DatabaseObject.FirstName = user.FirstName;
                     DatabaseObject.LastName = user.LastName;
-                    DatabaseObject.Password = user.Password;
+                    //Hashing Password
+                    DatabaseObject.Password = Crypto.HashPassword(user.Password);
+
                     DatabaseObject.UserName = user.UserName;
 
                     _context.Add(DatabaseObject);
                      _context.SaveChanges();
+
+                    return RedirectToAction("Home");
 
                 }
 
@@ -77,7 +83,7 @@ namespace _383_Phase1_InventoryTracker.Controllers
                 
 
             }
-           return RedirectToAction("Index");
+           return RedirectToAction("Create");
         }
         // GET: Users/Edit/5
         public async Task<IActionResult> Edit(int? id)
