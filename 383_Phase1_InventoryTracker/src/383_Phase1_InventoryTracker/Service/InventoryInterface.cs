@@ -10,10 +10,11 @@ namespace _383_Phase1_InventoryTracker.Service
     {
         
         
-            IEnumerable<InventoryItem> Get();
-            InventoryItem GetInventory(int id);
-            void PostFootballers(InventoryItem inventory);
-            void Put(InventoryItem inventory);
+            IEnumerable<InventoryItem> GetInventory();
+            InventoryItem GetInventoryById(int id);
+            void PostInventory(InventoryItem inventory);
+            void PutInventory(InventoryItem inventory);
+        bool DeleteInventory(int id);
         }
     }
 

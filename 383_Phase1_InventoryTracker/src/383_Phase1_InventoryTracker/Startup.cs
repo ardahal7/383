@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using _383_Phase1_InventoryTracker.Entities;
+using Microsoft.AspNetCore.Http;
 
 namespace _383_Phase1_InventoryTracker
 {
@@ -29,12 +30,13 @@ namespace _383_Phase1_InventoryTracker
             }
             Configuration = builder.Build();
         }
-
+     
         public IConfigurationRoot Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
             services.AddMvc();
@@ -42,6 +44,8 @@ namespace _383_Phase1_InventoryTracker
             var connection = @"Server=(LocalDb)\MSSQLLocalDB;Database= Inventory.db;Trusted_Connection=True;";
             services.AddDbContext<InventoryTrackerContext>(options =>
                    options.UseSqlServer(connection));
+           
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -65,6 +69,17 @@ namespace _383_Phase1_InventoryTracker
             app.UseApplicationInsightsExceptionTelemetry();
 
             app.UseStaticFiles();
+
+            //Configure Cookie Middleware
+            app.UseCookieAuthentication(new CookieAuthenticationOptions()
+            {
+                AuthenticationScheme = "MyCookieMiddlewareInstance",
+                LoginPath = new PathString("/User/SignIn/"),
+                AccessDeniedPath = new PathString("/Account/Forbidden/"),
+                AutomaticAuthenticate = true,
+                AutomaticChallenge = true
+            });
+
 
             app.UseMvc(routes =>
             {

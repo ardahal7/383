@@ -10,7 +10,7 @@ namespace _383_Phase1_InventoryTracker.Entities
 {
     public class InventoryTrackerContext : DbContext
     {
-
+       
         public InventoryTrackerContext(DbContextOptions<InventoryTrackerContext> options) : base(options)
         {
 

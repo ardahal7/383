@@ -16,7 +16,7 @@ namespace _383_Phase1_InventoryTracker.Controllers
 
         public UsersController(InventoryTrackerContext context)
         {
-            _context = context;    
+            _context = context;
         }
 
         // GET: Users
@@ -53,7 +53,7 @@ namespace _383_Phase1_InventoryTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public  IActionResult Create([Bind("FirstName,LastName,Password,UserName")] User user)
+        public IActionResult Create([Bind("FirstName,LastName,Password,UserName")] User user)
         {
             User DatabaseObject = new User();
 
@@ -62,7 +62,7 @@ namespace _383_Phase1_InventoryTracker.Controllers
                 //Searching if the username already exists in the database. 
                 User ObjectFromDatabase = _context.Users.FirstOrDefault(s => s.UserName.Equals(user.UserName));
 
-                if(ObjectFromDatabase == null)
+                if (ObjectFromDatabase == null)
                 {
                     //Creating an object to save in the database
                     DatabaseObject.FirstName = user.FirstName;
@@ -73,18 +73,57 @@ namespace _383_Phase1_InventoryTracker.Controllers
                     DatabaseObject.UserName = user.UserName;
 
                     _context.Add(DatabaseObject);
-                     _context.SaveChanges();
+                    _context.SaveChanges();
 
-                    return RedirectToAction("Home");
-
+                    return RedirectToAction("Index", "Home");
                 }
 
-                //ViewBag.Message("The username already exists");
-                
+                //ViewBag.Message("The username already exists");               
 
             }
-           return RedirectToAction("Create");
+            return RedirectToAction("Create");
+        }      
+
+        public ActionResult SignIn()
+        {
+            return View();
         }
+
+
+        //Post: Siging In
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SignIn([Bind("UserName,Password")] User user)
+        {
+            if (user != null & ModelState.IsValid)
+            {
+                //Check if the User is registered. 
+                User CheckUser = _context.Users.FirstOrDefault(s => s.UserName.Equals(user.UserName));
+                try
+                {
+                    bool a = Crypto.VerifyHashedPassword(CheckUser.Password, user.Password);
+                    if (a == true)
+                    {
+                        // creating authetication ticket                        
+                    }
+                    else
+                    {
+                        @ViewBag.Message = "Error.Ivalid login.";
+                        return View("SignInFailure");
+                    }
+                }
+                catch
+                {
+                    @ViewBag.Message = "Error.Ivalid login.";
+                    return View("SignInFailure");
+                }
+            }
+            // have to return to error page
+            return View();
+        }
+
+
+
         // GET: Users/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -170,3 +209,4 @@ namespace _383_Phase1_InventoryTracker.Controllers
         }
     }
 }
+
