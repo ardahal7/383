@@ -5,11 +5,9 @@
 }
 <div class="text-center">
     <section id="sign-in" class="container">
-        @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal" }))
+        @using (Html.BeginForm("SignIn", "Users", FormMethod.Post, new { @class = "form-horizontal" }))
         {
             @Html.AntiForgeryToken()
-
-
 
             <fieldset>
                 <legend>Sign In</legend>

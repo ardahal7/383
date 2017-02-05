@@ -10,6 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using _383_Phase1_InventoryTracker.Entities;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using _383_Phase1_InventoryTracker.Validation;
 
 namespace _383_Phase1_InventoryTracker
 {
@@ -40,10 +42,23 @@ namespace _383_Phase1_InventoryTracker
             // Add framework services.
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("ReadPolicy", policyBuilder =>
+                options.AddPolicy("AdminOnly", policy =>
                 {
-                    policyBuilder.RequireAuthenticatedUser().RequireAssertion(context => context.User.HasClaim("HasAccess", "true")).Build();
+                    policy.RequireClaim("Role", "Admin");
                 });
+                options.AddPolicy("UserOnly", policy =>
+                {
+                    policy.RequireClaim("Role", "User");
+                });
+
+
+                //options.AddPolicy("AdminOnly", policy => policy.RequireClaim("Admin"));
+                //options.AddPolicy("UserOnly", policy => policy.RequireClaim("User"));
+
+                //options.AddPolicy("ReadPolicy", policyBuilder =>
+                //{
+                //    policyBuilder.RequireAuthenticatedUser().RequireAssertion(context => context.User.HasClaim("HasAccess", "true")).Build();
+                //});
             });
 
             services.AddApplicationInsightsTelemetry(Configuration);
@@ -85,7 +100,11 @@ namespace _383_Phase1_InventoryTracker
                 LoginPath = new PathString("/Users/SignIn/"),
                 AccessDeniedPath = new PathString("/Account/Forbidden/"),
                 AutomaticAuthenticate = true,
-                AutomaticChallenge = true
+                AutomaticChallenge = true,
+                Events = new CookieAuthenticationEvents
+                {
+                    OnValidatePrincipal = Validator.ValidateAsync
+                }
             });
 
             app.UseMvc(builder =>

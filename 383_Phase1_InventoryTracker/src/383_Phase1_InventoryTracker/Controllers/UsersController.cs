@@ -22,7 +22,7 @@ namespace _383_Phase1_InventoryTracker.Controllers
         }
 
         // GET: Users
-        [Authorize(Policy = "ReadPolicy")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Users.ToListAsync());
@@ -113,13 +113,14 @@ namespace _383_Phase1_InventoryTracker.Controllers
                     bool a = Crypto.VerifyHashedPassword(CheckUser.Password, user.Password);
                     if (a == true)
                     { 
-                        return RedirectToAction("Index", "Home");
+                        //return RedirectToAction("Index", "Home");
                         // creating authetication ticket                        
                         // creating authetication ticket  
                         var claims = new List<Claim>
                         {
                             new Claim("HasAccess", "True"),
-                            new Claim("Username", user.UserName)
+                            new Claim("Username", user.UserName),
+                            new Claim("Role","Admin")
                         };
 
                         var claimsIdentity = new ClaimsIdentity(claims, "password");
