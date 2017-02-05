@@ -55,13 +55,22 @@ namespace _383_Phase1_InventoryTracker.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create([Bind("FirstName,LastName,Password,UserName")] User user)
         {
+
+            if (!ModelState.IsValid)
+            {
+                return View("Create", user);
+            }
             User DatabaseObject = new User();
 
             if (ModelState.IsValid)
             {
                 //Searching if the username already exists in the database. 
                 User ObjectFromDatabase = _context.Users.FirstOrDefault(s => s.UserName.Equals(user.UserName));
-
+                if (ObjectFromDatabase != null)
+                {
+                    ModelState.AddModelError("Error", "Username already exists. Please choose another username.");
+                    return View(user);
+                }
                 if (ObjectFromDatabase == null)
                 {
                     //Creating an object to save in the database
@@ -95,7 +104,7 @@ namespace _383_Phase1_InventoryTracker.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult SignIn([Bind("UserName,Password")] User user)
         {
-            if (user != null & ModelState.IsValid)
+            if (user != null)
             {
                 //Check if the User is registered. 
                 User CheckUser = _context.Users.FirstOrDefault(s => s.UserName.Equals(user.UserName));
@@ -103,7 +112,9 @@ namespace _383_Phase1_InventoryTracker.Controllers
                 {
                     bool a = Crypto.VerifyHashedPassword(CheckUser.Password, user.Password);
                     if (a == true)
-                    {
+                    { 
+                        return RedirectToAction("Index", "Home");
+                        // creating authetication ticket                        
                         // creating authetication ticket  
                         var claims = new List<Claim>
                         {
@@ -116,17 +127,18 @@ namespace _383_Phase1_InventoryTracker.Controllers
 
                         HttpContext.Authentication.SignInAsync("MyCookieMiddlewareInstance", claimsPrinciple);
                                     
+
                     }
                     else
                     {
-                        @ViewBag.Message = "Error.Ivalid login.";
-                        return View("SignInFailure");
+                        ModelState.AddModelError("Error", "Invalid Username/Password combination. Please try again");
+                        return View(user);
                     }
                 }
                 catch
                 {
-                    @ViewBag.Message = "Error.Ivalid login.";
-                    return View("SignInFailure");
+                    ModelState.AddModelError("Error", "Invalid Username/Password combination. Please try again");
+                    return View(user);
                 }
             }
             // have to return to error page

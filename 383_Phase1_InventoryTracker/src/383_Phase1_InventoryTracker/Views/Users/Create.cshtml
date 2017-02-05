@@ -16,6 +16,7 @@
             <div class="col-md-10">
                 <input asp-for="FirstName" class="form-control" />
                 <span asp-validation-for="FirstName" class="text-danger" />
+                @Html.ValidationMessageFor(m => m.FirstName)
             </div>
         </div>
         <div class="form-group">
@@ -23,6 +24,7 @@
             <div class="col-md-10">
                 <input asp-for="LastName" class="form-control" />
                 <span asp-validation-for="LastName" class="text-danger" />
+                @Html.ValidationMessageFor(m => m.LastName)
             </div>
         </div>
         <div class="form-group">
@@ -30,6 +32,7 @@
             <div class="col-md-10">
                 <input asp-for="Password" class="form-control" />
                 <span asp-validation-for="Password" class="text-danger" />
+                @Html.ValidationMessageFor(m => m.Password)
             </div>
         </div>
         <div class="form-group">
@@ -37,6 +40,8 @@
             <div class="col-md-10">
                 <input asp-for="UserName" class="form-control" />
                 <span asp-validation-for="UserName" class="text-danger" />
+                @Html.ValidationMessageFor(m => m.UserName)
+                @Html.ValidationMessage("Error")
             </div>
         </div>
         <div class="form-group">
