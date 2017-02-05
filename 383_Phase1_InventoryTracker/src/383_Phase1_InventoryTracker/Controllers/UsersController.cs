@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using _383_Phase1_InventoryTracker.Entities;
 using CryptoHelper;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace _383_Phase1_InventoryTracker.Controllers
 {
@@ -20,6 +22,7 @@ namespace _383_Phase1_InventoryTracker.Controllers
         }
 
         // GET: Users
+        [Authorize(Policy = "ReadPolicy")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Users.ToListAsync());
@@ -48,9 +51,6 @@ namespace _383_Phase1_InventoryTracker.Controllers
             return View();
         }
 
-        // POST: Users/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create([Bind("FirstName,LastName,Password,UserName")] User user)
@@ -104,7 +104,18 @@ namespace _383_Phase1_InventoryTracker.Controllers
                     bool a = Crypto.VerifyHashedPassword(CheckUser.Password, user.Password);
                     if (a == true)
                     {
-                        // creating authetication ticket                        
+                        // creating authetication ticket  
+                        var claims = new List<Claim>
+                        {
+                            new Claim("HasAccess", "True"),
+                            new Claim("Username", user.UserName)
+                        };
+
+                        var claimsIdentity = new ClaimsIdentity(claims, "password");
+                        var claimsPrinciple = new ClaimsPrincipal(claimsIdentity);
+
+                        HttpContext.Authentication.SignInAsync("MyCookieMiddlewareInstance", claimsPrinciple);
+                                    
                     }
                     else
                     {

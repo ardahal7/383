@@ -30,21 +30,29 @@ namespace _383_Phase1_InventoryTracker
             }
             Configuration = builder.Build();
         }
-     
+
         public IConfigurationRoot Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            
+
             // Add framework services.
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("ReadPolicy", policyBuilder =>
+                {
+                    policyBuilder.RequireAuthenticatedUser().RequireAssertion(context => context.User.HasClaim("HasAccess", "true")).Build();
+                });
+            });
+
             services.AddApplicationInsightsTelemetry(Configuration);
             services.AddMvc();
 
             var connection = @"Server=(LocalDb)\MSSQLLocalDB;Database= Inventory.db;Trusted_Connection=True;";
             services.AddDbContext<InventoryTrackerContext>(options =>
                    options.UseSqlServer(connection));
-           
+
 
         }
 
@@ -74,13 +82,16 @@ namespace _383_Phase1_InventoryTracker
             app.UseCookieAuthentication(new CookieAuthenticationOptions()
             {
                 AuthenticationScheme = "MyCookieMiddlewareInstance",
-                LoginPath = new PathString("/User/SignIn/"),
+                LoginPath = new PathString("/Users/SignIn/"),
                 AccessDeniedPath = new PathString("/Account/Forbidden/"),
                 AutomaticAuthenticate = true,
                 AutomaticChallenge = true
             });
 
-
+            app.UseMvc(builder =>
+            {
+                builder.MapRoute("default", "{controller=Home}/{action=index}/{id?}");
+            });
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
