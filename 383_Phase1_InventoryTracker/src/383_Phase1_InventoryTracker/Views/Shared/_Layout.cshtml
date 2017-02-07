@@ -37,8 +37,10 @@
                     <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                    <li>@Html.ActionLink("InventoryItems", "GetInventoryItems", "Inventory" )</li>
                     @if (!User.Identity.IsAuthenticated)
                     {
+                        
                         <li><a asp-area="" asp-controller="Users" asp-action="Create">Sign Up</a></li>
                         <li><a asp-area="" asp-controller="Users" asp-action="SignIn">Sign In</a></li>
 
@@ -47,6 +49,7 @@
 
                     @if (User.Identity.IsAuthenticated)
                     {
+                        <li><a asp-area="" asp-controller="InventoryItems" asp-action="ForUsers">Purchase</a></li>
                         @*<li><a asp-area="" asp-controller="Users" asp-action="SignOut">@current_user.login</a></li>*@
                         <li style="color: aqua;">Welcome @User.GetUserName()</li>
                         <li><a asp-area="" asp-controller="Users" asp-action="SignOut">Sign Out</a></li>

@@ -24,7 +24,7 @@ namespace _383_Phase1_InventoryTracker.Controllers
 
 
         // GET: Users
-
+        [Authorize(Policy="Admin")]
         public async Task<IActionResult> Index()
         {
 

@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace _383_Phase1_InventoryTracker.Controllers
 {
     [Produces("application/json")]
-    [Route("api/Inventory")]
+   // [Route("api/Inventory")]
     public class InventoryController : Controller
     {
         private readonly InventoryTrackerContext _context;
@@ -25,9 +25,9 @@ namespace _383_Phase1_InventoryTracker.Controllers
             _context = context;
         }
 
-        [Authorize(Policy ="Admin")]
+        
         [HttpGet]
-        [Route("GetInventory")]
+        //[Route("GetInventory")]
         public IEnumerable<InventoryItem> GetInventoryItems()
         {
           return _context.InventoryItems;
@@ -35,7 +35,7 @@ namespace _383_Phase1_InventoryTracker.Controllers
         }
               
         [HttpGet]
-        [Route("GetInventoryById")]
+      //  [Route("GetInventoryById")]
         public IActionResult GetInventoryItem(int id)
         {
             InventoryItem item = _context.InventoryItems.Find(id);

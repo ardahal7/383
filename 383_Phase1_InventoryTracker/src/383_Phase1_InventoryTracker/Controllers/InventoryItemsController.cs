@@ -26,6 +26,23 @@ namespace _383_Phase1_InventoryTracker.Controllers
             return View(await _context.InventoryItems.ToListAsync());
         }
 
+        [Authorize]
+        public async Task<IActionResult> ForUsers()
+        {
+            return View(await _context.InventoryItems.ToListAsync());
+        }
+
+        
+        public async Task<IActionResult> Purchase(int id) {
+
+            InventoryItem newItem = new InventoryItem();
+
+          newItem = _context.InventoryItems.FirstOrDefault(s => s.Id.Equals(id));
+
+            newItem.Quantity = newItem.Quantity - 1;
+            _context.SaveChanges();
+            return View(await _context.InventoryItems.ToListAsync());
+        }
         // GET: InventoryItems/Details/5
         public async Task<IActionResult> Details(int? id)
         {
