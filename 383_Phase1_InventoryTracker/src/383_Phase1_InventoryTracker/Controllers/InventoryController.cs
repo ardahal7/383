@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using _383_Phase1_InventoryTracker.Entities;
 using _383_Phase1_InventoryTracker.Service;
 using _383_Phase1_InventoryTracker.Entities.DTO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace _383_Phase1_InventoryTracker.Controllers
 {
@@ -24,12 +25,12 @@ namespace _383_Phase1_InventoryTracker.Controllers
             _context = context;
         }
 
-
+        [Authorize(Policy ="Admin")]
         [HttpGet]
         [Route("GetInventory")]
         public IEnumerable<InventoryItem> GetInventoryItems()
         {
-            return _context.InventoryItems;
+          return _context.InventoryItems;
           
         }
               

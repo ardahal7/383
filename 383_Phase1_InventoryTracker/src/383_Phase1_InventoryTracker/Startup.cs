@@ -12,6 +12,7 @@ using _383_Phase1_InventoryTracker.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using _383_Phase1_InventoryTracker.Validation;
+using Microsoft.AspNetCore.Authorization;
 
 namespace _383_Phase1_InventoryTracker
 {
@@ -42,15 +43,17 @@ namespace _383_Phase1_InventoryTracker
             // Add framework services.
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("AdminOnly", policy =>
+                options.AddPolicy("Admin", policy =>
                 {
                     policy.RequireClaim("Role", "Admin");
                 });
-                options.AddPolicy("UserOnly", policy =>
+                options.AddPolicy("User", policy =>
                 {
                     policy.RequireClaim("Role", "User");
                 });
-
+                
+                    options.DefaultPolicy = new AuthorizationPolicyBuilder("MyCookieMiddlewareInstance").RequireAuthenticatedUser().Build();
+               
 
                 //options.AddPolicy("AdminOnly", policy => policy.RequireClaim("Admin"));
                 //options.AddPolicy("UserOnly", policy => policy.RequireClaim("User"));
@@ -60,6 +63,8 @@ namespace _383_Phase1_InventoryTracker
                 //    policyBuilder.RequireAuthenticatedUser().RequireAssertion(context => context.User.HasClaim("HasAccess", "true")).Build();
                 //});
             });
+
+
 
             services.AddApplicationInsightsTelemetry(Configuration);
             services.AddMvc();
@@ -72,7 +77,7 @@ namespace _383_Phase1_InventoryTracker
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, InventoryTrackerContext context)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
@@ -92,31 +97,39 @@ namespace _383_Phase1_InventoryTracker
             app.UseApplicationInsightsExceptionTelemetry();
 
             app.UseStaticFiles();
+            
 
             //Configure Cookie Middleware
             app.UseCookieAuthentication(new CookieAuthenticationOptions()
             {
+               // AuthenticationScheme = CookieAuthenticationDefaults.AuthenticationScheme,
                 AuthenticationScheme = "MyCookieMiddlewareInstance",
-                LoginPath = new PathString("/Users/SignIn/"),
-                AccessDeniedPath = new PathString("/Account/Forbidden/"),
+                LoginPath = new PathString("/Users/SignIn"),
+                AccessDeniedPath = new PathString("/Users/Unauthorized"),
                 AutomaticAuthenticate = true,
                 AutomaticChallenge = true,
+
                 Events = new CookieAuthenticationEvents
                 {
                     OnValidatePrincipal = Validator.ValidateAsync
                 }
             });
 
+
+
+
             app.UseMvc(builder =>
-            {
-                builder.MapRoute("default", "{controller=Home}/{action=index}/{id?}");
-            });
+                {
+                    builder.MapRoute("default", "{controller=Home}/{action=index}/{id?}");
+                });
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            DbInitializer.Initialize(context);
         }
     }
 }

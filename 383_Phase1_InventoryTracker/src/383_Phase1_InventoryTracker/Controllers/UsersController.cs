@@ -9,6 +9,7 @@ using _383_Phase1_InventoryTracker.Entities;
 using CryptoHelper;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace _383_Phase1_InventoryTracker.Controllers
 {
@@ -21,10 +22,12 @@ namespace _383_Phase1_InventoryTracker.Controllers
             _context = context;
         }
 
+
         // GET: Users
-        [Authorize(Policy = "AdminOnly")]
+
         public async Task<IActionResult> Index()
         {
+
             return View(await _context.Users.ToListAsync());
         }
 
@@ -56,6 +59,7 @@ namespace _383_Phase1_InventoryTracker.Controllers
         public IActionResult Create([Bind("FirstName,LastName,Password,UserName")] User user)
         {
 
+
             if (!ModelState.IsValid)
             {
                 return View("Create", user);
@@ -73,6 +77,7 @@ namespace _383_Phase1_InventoryTracker.Controllers
                 }
                 if (ObjectFromDatabase == null)
                 {
+
                     //Creating an object to save in the database
                     DatabaseObject.FirstName = user.FirstName;
                     DatabaseObject.LastName = user.LastName;
@@ -80,9 +85,22 @@ namespace _383_Phase1_InventoryTracker.Controllers
                     DatabaseObject.Password = Crypto.HashPassword(user.Password);
 
                     DatabaseObject.UserName = user.UserName;
+                    DatabaseObject.Role = "User";
 
                     _context.Add(DatabaseObject);
                     _context.SaveChanges();
+                    var claims = new List<Claim>
+                        {
+                            new Claim("HasAccess", "True"),
+                            new Claim("Username", user.UserName),
+                            new Claim("Role","Admin"),
+                            new Claim ("Role","User")
+                        };
+
+                    var claimsIdentity = new ClaimsIdentity(claims, "password");
+                    var claimsPrinciple = new ClaimsPrincipal(claimsIdentity);
+
+                    HttpContext.Authentication.SignInAsync("MyCookieMiddlewareInstance", claimsPrinciple);
 
                     return RedirectToAction("Index", "Home");
                 }
@@ -91,7 +109,7 @@ namespace _383_Phase1_InventoryTracker.Controllers
 
             }
             return RedirectToAction("Create");
-        }      
+        }
 
         public ActionResult SignIn()
         {
@@ -112,7 +130,8 @@ namespace _383_Phase1_InventoryTracker.Controllers
                 {
                     bool a = Crypto.VerifyHashedPassword(CheckUser.Password, user.Password);
                     if (a == true)
-                    { 
+                    {
+
                         //return RedirectToAction("Index", "Home");
                         // creating authetication ticket                        
                         // creating authetication ticket  
@@ -127,7 +146,16 @@ namespace _383_Phase1_InventoryTracker.Controllers
                         var claimsPrinciple = new ClaimsPrincipal(claimsIdentity);
 
                         HttpContext.Authentication.SignInAsync("MyCookieMiddlewareInstance", claimsPrinciple);
-                                    
+
+                        if (CheckUser.Role == "Admin")
+                        {
+                            return RedirectToAction("Index", "InventoryItems");
+                        }
+                        else
+                        {
+
+                            return RedirectToAction("Index", "Home");
+                        }
 
                     }
                     else
@@ -141,11 +169,25 @@ namespace _383_Phase1_InventoryTracker.Controllers
                     ModelState.AddModelError("Error", "Invalid Username/Password combination. Please try again");
                     return View(user);
                 }
+
+
             }
-            // have to return to error page
-            return View();
+
+
+            else
+            {
+                return View(user);
+            }
         }
 
+
+
+
+        public ActionResult SignOut()
+        {
+            HttpContext.Authentication.SignOutAsync("MyCookieMiddlewareInstance");
+            return RedirectToAction("Index", "Home");
+        }
 
 
         // GET: Users/Edit/5
@@ -231,6 +273,25 @@ namespace _383_Phase1_InventoryTracker.Controllers
         {
             return _context.Users.Any(e => e.Id == id);
         }
+
+        //Adding admin to the database.
+        public void AddAdmin()
+        {
+            User admin = new User();
+            var password = Crypto.HashPassword("selu2017");
+            admin.Role = "Admin";
+            admin.UserName = "admin";
+            admin.FirstName = "Admin";
+            admin.LastName = "Admin";
+            _context.Add(admin);
+            _context.SaveChanges();
+
+
+
+        }
+
     }
+
+
 }
 

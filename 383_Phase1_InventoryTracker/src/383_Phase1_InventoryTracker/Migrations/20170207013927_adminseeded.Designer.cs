@@ -8,9 +8,10 @@ using _383_Phase1_InventoryTracker.Entities;
 namespace _383_Phase1_InventoryTracker.Migrations
 {
     [DbContext(typeof(InventoryTrackerContext))]
-    partial class InventoryTrackerContextModelSnapshot : ModelSnapshot
+    [Migration("20170207013927_adminseeded")]
+    partial class adminseeded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.0-rtm-22752")

@@ -32,5 +32,7 @@ namespace _383_Phase1_InventoryTracker.Entities
         [StringLength(100, ErrorMessage = "The password must be at least 4 characters long.", MinimumLength = 4)]
         [DataType(DataType.Password)]
         public string Password { get; set; }
+
+        public string Role { get; set; }
     }
 }
