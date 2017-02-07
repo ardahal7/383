@@ -1,5 +1,6 @@
 @model IEnumerable<_383_Phase1_InventoryTracker.Entities.User>
 
+
 @{
     ViewData["Title"] = "Index";
 }
@@ -7,7 +8,9 @@
 <h2>Index</h2>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-area="" asp-controller="Users" asp-action="AddUser">Add New User</a>
+    <a asp-area="" asp-controller="InventoryItems" asp-action="Index">Manage Inventories</a>
+
 </p>
 <table class="table">
     <thead>

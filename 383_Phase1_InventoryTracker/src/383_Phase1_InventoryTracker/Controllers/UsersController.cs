@@ -31,6 +31,7 @@ namespace _383_Phase1_InventoryTracker.Controllers
             return View(await _context.Users.ToListAsync());
         }
 
+        [Authorize(Policy = "Admin")]
         // GET: Users/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -47,6 +48,30 @@ namespace _383_Phase1_InventoryTracker.Controllers
 
             return View(user);
         }
+
+        [Authorize(Policy = "Admin")]
+        public ActionResult AddUser() {
+            return View();
+
+        }
+
+        [Authorize(Policy = "Admin")]
+        [HttpPost]
+        public ActionResult AddUser(User user)
+        {
+            if (ModelState.IsValid)
+            {
+                user.Password = Crypto.HashPassword(user.Password);
+                _context.Users.Add(user);
+                _context.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            return View(user);
+        }
+    
+
+
 
         // GET: Users/Create
         public IActionResult Create()
@@ -93,8 +118,7 @@ namespace _383_Phase1_InventoryTracker.Controllers
                         {
                             new Claim("HasAccess", "True"),
                             new Claim("Username", user.UserName),
-                            new Claim("Role","Admin"),
-                            new Claim ("Role","User")
+                            new Claim("Role","User")
                         };
 
                     var claimsIdentity = new ClaimsIdentity(claims, "password");
@@ -138,8 +162,8 @@ namespace _383_Phase1_InventoryTracker.Controllers
                         var claims = new List<Claim>
                         {
                             new Claim("HasAccess", "True"),
-                            new Claim("Username", user.UserName),
-                            new Claim("Role","Admin")
+                            new Claim("Username", CheckUser.UserName),
+                            new Claim("Role",CheckUser.Role)
                         };
 
                         var claimsIdentity = new ClaimsIdentity(claims, "password");
@@ -149,7 +173,7 @@ namespace _383_Phase1_InventoryTracker.Controllers
 
                         if (CheckUser.Role == "Admin")
                         {
-                            return RedirectToAction("Index", "InventoryItems");
+                            return RedirectToAction("Index", "Users");
                         }
                         else
                         {
@@ -190,6 +214,7 @@ namespace _383_Phase1_InventoryTracker.Controllers
         }
 
 
+        [Authorize(Policy = "Admin")]
         // GET: Users/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -209,6 +234,7 @@ namespace _383_Phase1_InventoryTracker.Controllers
         // POST: Users/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Policy = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,Password,UserName")] User user)
@@ -241,6 +267,7 @@ namespace _383_Phase1_InventoryTracker.Controllers
             return View(user);
         }
 
+        [Authorize(Policy = "Admin")]
         // GET: Users/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -258,6 +285,7 @@ namespace _383_Phase1_InventoryTracker.Controllers
             return View(user);
         }
 
+        [Authorize(Policy = "Admin")]
         // POST: Users/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
