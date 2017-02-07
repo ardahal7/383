@@ -11,7 +11,6 @@ namespace _383_Phase1_InventoryTracker.Entities
     public class User
     {
         [Key]
-        
         public int Id { get; set; }
 
         [Required]

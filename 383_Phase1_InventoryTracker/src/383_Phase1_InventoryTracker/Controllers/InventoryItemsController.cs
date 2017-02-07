@@ -20,13 +20,19 @@ namespace _383_Phase1_InventoryTracker.Controllers
         }
 
         // GET: InventoryItems
-        [Authorize(Policy ="Admin")]
+        //[Authorize(Policy ="Admin")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.InventoryItems.ToListAsync());
         }
 
-  
+        [Authorize(Policy = "Admin")]
+        public async Task<IActionResult> AdminIndex()
+        {
+            return View(await _context.InventoryItems.ToListAsync());
+        }
+
+
         public async Task<IActionResult> ForUsers()
         {
             return View(await _context.InventoryItems.ToListAsync());
@@ -43,7 +49,6 @@ namespace _383_Phase1_InventoryTracker.Controllers
             _context.SaveChanges();
             return View(await _context.InventoryItems.ToListAsync());
         }
-        [Authorize(Policy = "Admin")]
         // GET: InventoryItems/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -62,8 +67,6 @@ namespace _383_Phase1_InventoryTracker.Controllers
         }
 
         [Authorize(Policy = "Admin")]
-
-        // GET: InventoryItems/Create
         public IActionResult Create()
         {
             return View();
@@ -72,7 +75,6 @@ namespace _383_Phase1_InventoryTracker.Controllers
         // POST: InventoryItems/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-
         [Authorize(Policy = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -104,10 +106,10 @@ namespace _383_Phase1_InventoryTracker.Controllers
             return View(inventoryItem);
         }
 
-        [Authorize(Policy = "Admin")]
         // POST: InventoryItems/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Policy = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,CreatedByUserId,Name,Quantity")] InventoryItem inventoryItem)
@@ -157,7 +159,6 @@ namespace _383_Phase1_InventoryTracker.Controllers
 
             return View(inventoryItem);
         }
-
 
         // POST: InventoryItems/Delete/5
         [Authorize(Policy = "Admin")]

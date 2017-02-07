@@ -34,21 +34,24 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li>@Html.ActionLink("Inventory", "AdminIndex", "InventoryItems")</li>
+                    }
+                    @if (!User.Identity.IsAuthenticated)
+                    {
+                        <li>@Html.ActionLink("Inventory", "Index", "InventoryItems")</li>
+                    }
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li><a asp-area="" asp-controller="Users" asp-action="Index">Users</a></li>
+                    }
 
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                   
-                    
-                    <li>@Html.ActionLink("InventoryItems", "GetInventoryItems", "Inventory" )</li>
-                   @if (!User.Identity.IsAuthenticated)
-                   {
-                    <li><a asp-area="" asp-controller="Users" asp-action="SignIn">SignIn</a></li>
-                    <li><a asp-area="" asp-controller="Users" asp-action="Create">SignUp</a></li>
-
-
-
-                   }
-
-
+                    @if (!User.Identity.IsAuthenticated)
+                    {
+                        <li><a asp-area="" asp-controller="Users" asp-action="SignIn">Sign In</a></li>
+                        <li><a asp-area="" asp-controller="Users" asp-action="Create">Sign Up</a></li>
+                    }
                     @if (User.Identity.IsAuthenticated)
                     {
                         <li><a asp-area="" asp-controller="InventoryItems" asp-action="ForUsers">Purchase</a></li>

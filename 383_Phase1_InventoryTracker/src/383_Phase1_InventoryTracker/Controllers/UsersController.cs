@@ -49,8 +49,10 @@ namespace _383_Phase1_InventoryTracker.Controllers
             return View(user);
         }
 
+
         [Authorize(Policy = "Admin")]
-        public ActionResult AddUser() {
+        public ActionResult AddUser()
+        {
             return View();
 
         }
@@ -69,10 +71,8 @@ namespace _383_Phase1_InventoryTracker.Controllers
 
             return View(user);
         }
-    
 
-
-
+        //[Authorize(Policy = "Admin")]
         // GET: Users/Create
         public IActionResult Create()
         {
@@ -118,7 +118,7 @@ namespace _383_Phase1_InventoryTracker.Controllers
                         {
                             new Claim("HasAccess", "True"),
                             new Claim("Username", user.UserName),
-                            new Claim("Role","User")
+                            new Claim ("Role","User")
                         };
 
                     var claimsIdentity = new ClaimsIdentity(claims, "password");
@@ -173,7 +173,7 @@ namespace _383_Phase1_InventoryTracker.Controllers
 
                         if (CheckUser.Role == "Admin")
                         {
-                            return RedirectToAction("Index", "Users");
+                            return RedirectToAction("Index", "Users"); ;
                         }
                         else
                         {
@@ -212,7 +212,6 @@ namespace _383_Phase1_InventoryTracker.Controllers
             HttpContext.Authentication.SignOutAsync("MyCookieMiddlewareInstance");
             return RedirectToAction("Index", "Home");
         }
-
 
         [Authorize(Policy = "Admin")]
         // GET: Users/Edit/5
@@ -285,8 +284,8 @@ namespace _383_Phase1_InventoryTracker.Controllers
             return View(user);
         }
 
-        [Authorize(Policy = "Admin")]
         // POST: Users/Delete/5
+        [Authorize(Policy = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
